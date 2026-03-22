@@ -70,7 +70,6 @@ export default function StepProof() {
         paymentMethod: paymentMethod!,
         verificationMethod: effectiveMethod,
         rawProof: proofText || undefined,
-        screenshotFile: file ?? undefined,
       })
       setResult(result)
       setStep(5)

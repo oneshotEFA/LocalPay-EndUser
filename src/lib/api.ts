@@ -53,16 +53,25 @@ export async function submitSingleDeposit(payload: {
   amount: number;
   paymentMethod: string;
   verificationMethod: string;
-  rawProof?: string;
-  screenshotFile?: File;
+  rawProof?: string | null;
 }) {
-  const form = new FormData();
-  form.append("amount", String(payload.amount));
-  form.append("paymentMethod", payload.paymentMethod);
-  form.append("verificationMethod", payload.verificationMethod);
-  if (payload.rawProof) form.append("rawProof", payload.rawProof);
-  if (payload.screenshotFile) form.append("screenshot", payload.screenshotFile);
-  return apiFetch<any>("/api/deposit", { method: "POST", body: form });
+  const body = JSON.stringify({
+    amount: payload.amount,
+    paymentMethod: payload.paymentMethod,
+    verificationMethod: payload.verificationMethod,
+    rawProof: payload.rawProof ?? null,
+  });
+
+  const res = await fetch(`${DEPOSIT_ENDPOINT}/single`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${DEPOSIT_API_TOKEN}`,
+    },
+    body,
+  });
+
+  return parseJsonResponse<any>(res);
 }
 
 // ── Bulk deposit ──────────────────────────────────────────────────────────────
@@ -75,8 +84,12 @@ export async function submitBulkDeposit(payload: {
   verificationMethod: string;
   receipts: BulkReceipt[];
 }) {
-  return apiFetch<any>("/api/deposit/bulk", {
+  const res = await fetch(`${DEPOSIT_ENDPOINT}/bulk`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${DEPOSIT_API_TOKEN}`,
+    },
     body: JSON.stringify({
       declaredTotal: payload.declaredTotal,
       paymentMethod: payload.paymentMethod,
@@ -87,6 +100,32 @@ export async function submitBulkDeposit(payload: {
       })),
     }),
   });
+
+  return parseJsonResponse<any>(res);
+}
+
+const DEPOSIT_ENDPOINT = "http://localhost:3000/api/deposit";
+const DEPOSIT_API_TOKEN = "76169202681efa.21@gmai.com";
+
+async function parseJsonResponse<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  let payload: any = null;
+  if (text) {
+    try {
+      payload = JSON.parse(text);
+    } catch {
+      payload = { message: text };
+    }
+  }
+  if (!res.ok) {
+    const errorMessage =
+      payload?.message ??
+      payload?.reason ??
+      payload?.error ??
+      `Request failed: ${res.status}`;
+    throw new Error(errorMessage);
+  }
+  return (payload ?? {}) as T;
 }
 
 // ── History ───────────────────────────────────────────────────────────────────
@@ -105,12 +144,8 @@ export async function fetchHistory(
       headers: { Authorization: `Bearer ${HISTORY_API_TOKEN}` },
     },
   );
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body?.message ?? `History request failed: ${res.status}`);
-  }
 
-  const data = await res.json();
+  const data = await parseJsonResponse<any>(res);
   const safePageSize = data.pageSize ?? pageSize ?? HISTORY_DEFAULT_PAGE_SIZE;
   const safePage = data.page ?? page;
   const total = typeof data.total === "number" ? data.total : 0;
