@@ -98,9 +98,11 @@ function SkeletonCard() {
   )
 }
 
+type HistoryResponse = Awaited<ReturnType<typeof fetchHistory>>
+
 export default function HistoryPanel() {
   const [page, setPage] = useState(0)
-  const [data, setData] = useState<Awaited<ReturnType<typeof fetchHistory>> | null>(null)
+  const [data, setData] = useState<HistoryResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -110,7 +112,7 @@ export default function HistoryPanel() {
     try {
       const res = await fetchHistory(p)
       setData(res)
-      setPage(p)
+      setPage(res.page)
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -172,7 +174,7 @@ export default function HistoryPanel() {
           {data.totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-2">
               <button
-                onClick={() => load(page - 1)}
+                onClick={() => load(Math.max(0, page - 1))}
                 disabled={page === 0}
                 className="btn-ghost p-2 disabled:opacity-30"
               >
@@ -183,7 +185,7 @@ export default function HistoryPanel() {
               </span>
               <button
                 onClick={() => load(page + 1)}
-                disabled={page + 1 >= data.totalPages}
+                disabled={!data.hasMore}
                 className="btn-ghost p-2 disabled:opacity-30"
               >
                 <ChevronRight size={15} />
