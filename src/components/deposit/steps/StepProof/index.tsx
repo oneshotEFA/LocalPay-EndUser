@@ -20,6 +20,7 @@ export default function StepProof() {
   const [text, setText] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
+  const [accountNumber, setAccountNumber] = useState('')
 
   function handleFile(f: File) {
     setFile(f)
@@ -36,7 +37,13 @@ export default function StepProof() {
 
   async function submit() {
     setError(null)
-    if (verificationMethod === 'SCREENSHOT' && !file) { setError('Please upload a screenshot.'); return }
+
+    if (verificationMethod === 'SCREENSHOT' && !file) {
+      setError('Please upload a screenshot.'); return
+    }
+    if (verificationMethod === 'SCREENSHOT' && !accountNumber.trim()) {
+      setError('Please enter your sender account number.'); return
+    }
     if ((verificationMethod === 'SMS' || verificationMethod === 'LINK') && !text.trim()) {
       setError('Please paste the required text.'); return
     }
@@ -68,6 +75,7 @@ export default function StepProof() {
         paymentMethod: paymentMethod!,
         verificationMethod: effectiveMethod,
         rawProof: proofText || undefined,
+        senderAccountNumber: accountNumber.trim() || undefined,
       })
 
       setResult(result)
@@ -107,6 +115,8 @@ export default function StepProof() {
           fileName={file?.name ?? null}
           onFile={handleFile}
           onClear={clearFile}
+          accountNumber={accountNumber}
+          onAccountNumberChange={setAccountNumber}
         />
       )}
 

@@ -9,14 +9,50 @@ interface Props {
   fileName: string | null
   onFile: (file: File) => void
   onClear: () => void
+  accountNumber: string
+  onAccountNumberChange: (value: string) => void
 }
 
-export default function ScreenshotUpload({ preview, fileName, onFile, onClear }: Props) {
+export default function ScreenshotUpload({
+  preview,
+  fileName,
+  onFile,
+  onClear,
+  accountNumber='',
+  onAccountNumberChange,
+}: Props) {
   const [dragOver, setDragOver] = useState(false)
+  const [touched, setTouched] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const accountError = touched && accountNumber.trim().length === 0
+
   return (
-    <>
+    <div className="flex flex-col gap-3">
+      {/* ── Account Number Input ── */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-zinc-400">
+          Sender Account Number <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={accountNumber}
+          onChange={(e) => onAccountNumberChange(e.target.value)}
+          onBlur={() => setTouched(true)}
+          placeholder="Enter your bank account number"
+          className={clsx(
+            'w-full rounded-lg bg-zinc-900 border px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors',
+            accountError
+              ? 'border-red-500 focus:border-red-400'
+              : 'border-zinc-700 focus:border-blue-500',
+          )}
+        />
+        {accountError && (
+          <p className="text-xs text-red-400">Account number is required before uploading.</p>
+        )}
+      </div>
+
+      {/* ── Upload Area ── */}
       {preview ? (
         <div className="relative rounded-xl overflow-hidden border border-zinc-700">
           <img src={preview} alt="Preview" className="w-full object-contain max-h-56" />
@@ -32,18 +68,29 @@ export default function ScreenshotUpload({ preview, fileName, onFile, onClear }:
         </div>
       ) : (
         <div
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+          onDragOver={(e) => {
+            e.preventDefault()
+            if (accountNumber.trim()) setDragOver(true)
+          }}
           onDragLeave={() => setDragOver(false)}
           onDrop={(e) => {
             e.preventDefault()
             setDragOver(false)
+            if (!accountNumber.trim()) { setTouched(true); return }
             const f = e.dataTransfer.files[0]
             if (f) onFile(f)
           }}
-          onClick={() => fileRef.current?.click()}
+          onClick={() => {
+            if (!accountNumber.trim()) { setTouched(true); return }
+            fileRef.current?.click()
+          }}
           className={clsx(
-            'border-2 border-dashed rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer transition-colors duration-150',
-            dragOver ? 'border-blue-500 bg-blue-500/5' : 'border-zinc-700 hover:border-zinc-500',
+            'border-2 border-dashed rounded-xl p-10 flex flex-col items-center gap-3 transition-colors duration-150',
+            !accountNumber.trim()
+              ? 'border-zinc-800 opacity-50 cursor-not-allowed'
+              : dragOver
+              ? 'border-blue-500 bg-blue-500/5 cursor-pointer'
+              : 'border-zinc-700 hover:border-zinc-500 cursor-pointer',
           )}
         >
           <Upload size={22} className="text-zinc-500" />
@@ -64,6 +111,6 @@ export default function ScreenshotUpload({ preview, fileName, onFile, onClear }:
           if (f) onFile(f)
         }}
       />
-    </>
+    </div>
   )
 }
