@@ -51,7 +51,9 @@ function SmsBubble({ senderName, text }: { senderName: string; text: string }) {
         </div>
         <p className="text-[9px] text-zinc-500 mt-2 ml-1">
           Copy the <span className="text-zinc-300">full message</span> exactly
-          as shown and paste it in the next step.
+          as shown and paste it in the next step.{" "}
+          <span className="text-zinc-300">You can remove</span> the current
+          balance details
         </p>
       </div>
     </div>
@@ -259,15 +261,15 @@ export default function StepVerMethod() {
 }
 // ── Per-bank demo SMS text ────────────────────────────────────────────────────
 const DEMO_SMS: Record<string, string> = {
-  CBE: `Dear Mr, You have transfered ETB 1.00 to Ephrem Mesfin on 24/03/2026 at 14:55:21 from your account 1*********8625. Your account has been debited with a S.charge of ETB 0.00 and VAT(15%) of ETB0.00 and Disaster Fund (5%) of ETB0.00, with a total of ETB 1.00. Your Current Balance is ETB 612.64. Thank you for Banking with CBE! https://apps.cbe.com.et:100/?id=FT26083LN1YR80798625 For feedback click the link https://forms.gle/R1s9nkJ6qZVCxRVu9`,
+  CBE: `Dear Mr, You have transfered ETB 1.00 to Ephrem Mesfin on 24/03/2026 at 14:55:21 from your account 1*********8625. Your account has been debited with a S.charge of ETB 0.00 and VAT(15%) of ETB0.00 and Disaster Fund (5%) of ETB0.00, with a total of ETB 1.00. Thank you for Banking with CBE! https://apps.cbe.com.et:100/?id=FT26083LN1YR80798625 For feedback click the link https://forms.gle/R1s9nkJ6qZVCxRVu9`,
 
-  TELEBIRR: `Dear Ephrem You have transferred ETB 1.00 to CHALTU HIRPHASA (2519****7857) on 24/03/2026 20:59:48. Your transaction number is DCK82EGB8C. Your current E-Money Account balance is ETB 0.00. https://transactioninfo.ethiotelecom.et/receipt/DCK82EGB8C Thank you for using telebirr  Ethio telecom`,
+  TELEBIRR: `Dear Ephrem You have transferred ETB 1.00 to CHALTU HIRPHASA (2519****7857) on 24/03/2026 20:59:48. Your transaction number is DCK82EGB8C. https://transactioninfo.ethiotelecom.et/receipt/DCK82EGB8C Thank you for using telebirr  Ethio telecom`,
 
-  EBIRR: `[-EBIRR-KAAFI-] Dear Ephrem, You have successfully transferred ETB1.00 to Chaltu Hirphasa on 24/03/2026 at 15:02:11. Transfer-Id: 2034819274651. Charges: ETB0.00 with VAT: ETB0.00. Your current balance is ETB 0.00. https://transactioninfo.ebirr.com/kaafimf-Ebirr/receipt/2034819274651`,
+  EBIRR: `[-EBIRR-KAAFI-] Dear Ephrem, You have successfully transferred ETB1.00 to Chaltu Hirphasa on 24/03/2026 at 15:02:11. Transfer-Id: 2034819274651. Charges: ETB0.00 with VAT: ETB0.00. https://transactioninfo.ebirr.com/kaafimf-Ebirr/receipt/2034819274651`,
 
-  ABYSSINIA: `Dear Customer, ETB 1.00 has been debited from your account and transferred to Ephrem Mesfin on 24/03/2026 at 14:58:00. Transaction Ref FT26083J258M. Your current balance is ETB 1,204.50. Thank you for banking with Bank of Abyssinia. https://cs.bankofabyssinia.com/slip/?trx=FT26083J258M`,
+  ABYSSINIA: `Dear Customer, ETB 1.00 has been debited from your account and transferred to Ephrem Mesfin on 24/03/2026 at 14:58:00. Transaction Ref FT26083J258M. Thank you for banking with Bank of Abyssinia. https://cs.bankofabyssinia.com/slip/?trx=FT26083J258M`,
 
-  NIB: `Dear Customer, Your account has been debited with ETB 1.00 on 24/03/2026 at 15:01:44. Beneficiary: Ephrem Mesfin. Reference: NIB2026083001234. Available Balance: ETB 8,540.00. Thank you for choosing NIB International Bank.`,
+  NIB: `Dear Customer, Your account has been debited with ETB 1.00 on 24/03/2026 at 15:01:44. Beneficiary: Ephrem Mesfin. Reference: NIB2026083001234. Thank you for choosing NIB International Bank.`,
 };
 
 // ── Per-bank demo link ────────────────────────────────────────────────────────
