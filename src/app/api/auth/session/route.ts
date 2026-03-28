@@ -1,11 +1,11 @@
 // ── app/api/auth/session/route.ts ─────────────────────────────────────────────
-// Called by /deposit/page.tsx after the user lands from the external service.
-// Decodes the obfuscated URL params, verifies HMAC + timestamp, signs a
-// session JWT, and sets it as an httpOnly cookie.
+// Called by /deposit/[token]/page.tsx after the user lands from the external
+// service. Decodes the JWT token, verifies signature + expiry, signs a session
+// JWT, and sets it as an httpOnly cookie.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { NextRequest, NextResponse } from "next/server";
-import { decodeRedirectParams } from "@/lib/token";
+import { decodeCheckoutToken } from "@/lib/token";
 import {
   createSessionJwt,
   setSessionCookie,
@@ -14,21 +14,26 @@ import {
 
 export async function POST(req: NextRequest) {
   try {
-    const { ref, sig } = await req.json();
+    const { token } = await req.json();
 
-    if (!ref || !sig) {
+    if (!token) {
       return NextResponse.json(
-        { code: "MISSING_PARAMS", message: "Missing ref or sig." },
+        { code: "MISSING_PARAMS", message: "Missing token." },
         { status: 400 },
       );
     }
 
-    // Decode + verify: checks HMAC signature and 5-minute timestamp window
-    const { userId, email } = await decodeRedirectParams(ref, sig);
- 
-    // Sign a session JWT and attach it as an httpOnly cookie
+    const { userId, email, checkoutId, invoiceId, amount } =
+      await decodeCheckoutToken(token);
+
     const jwt = await createSessionJwt({ userId, email });
-    const response = NextResponse.json({ ok: true, email });
+    const response = NextResponse.json({
+      ok: true,
+      email,
+      checkoutId,
+      invoiceId,
+      amount,
+    });
     setSessionCookie(response, jwt);
 
     return response;
