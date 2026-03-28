@@ -1,13 +1,16 @@
 import "dotenv/config";
-import { buildRedirectParams } from "@/lib/token";
+import { buildCheckoutToken } from "@/lib/token";
 
 async function main() {
-  const { ref, sig } = await buildRedirectParams(
-    "test@gmail.com",
-    "1547236567",
-  );
+  const token = await buildCheckoutToken({
+    userId: "1547236567",
+    email: "test@gmail.com",
+    checkoutId: "checkout_test_001",
+    invoiceId: "invoice_test_001",
+    amount: 1,
+  });
 
-  console.log(`http://localhost:3001/deposit?ref=${ref}&sig=${sig}`);
+  console.log(`http://localhost:3001/deposit/${token}`);
 }
 
 main();
