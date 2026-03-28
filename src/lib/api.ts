@@ -50,6 +50,7 @@ export async function submitSingleDeposit(payload: {
   verificationMethod: string;
   rawProof?: string | null;
   accountNumber?: string;
+  checkoutId: string | undefined;
 }) {
   return apiFetch<any>("/api/deposit", {
     method: "POST",
@@ -59,6 +60,7 @@ export async function submitSingleDeposit(payload: {
       verificationMethod: payload.verificationMethod,
       rawProof: payload.rawProof ?? null,
       accountNumber: payload.accountNumber,
+      checkoutId: payload.checkoutId,
     }),
   });
 }
