@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "../../providers/QueryProvider";
+import { ThemeProvider } from "../../providers/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "HabeshaUnlocker — Deposit",
@@ -13,9 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-zinc-950 text-white antialiased">
-        <QueryProvider>{children}</QueryProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-background text-textMain antialiased">
+        <ThemeProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

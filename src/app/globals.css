@@ -3,11 +3,29 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 250 250 250; /* #fafafa zinc-50 */
+    --surface: 255 255 255; /* white */
+    --surface-hover: 244 244 245; /* zinc-100 */
+    --border: 228 228 231; /* zinc-200 */
+    --text-main: 9 9 11; /* zinc-950 */
+    --text-muted: 113 113 122; /* zinc-500 */
+  }
+
+  .dark {
+    --background: 9 9 11; /* zinc-950 */
+    --surface: 24 24 27; /* zinc-900 */
+    --surface-hover: 39 39 42; /* zinc-800 */
+    --border: 39 39 42; /* zinc-800 */
+    --text-main: 250 250 250; /* zinc-50 */
+    --text-muted: 161 161 170; /* zinc-400 */
+  }
+
   * { box-sizing: border-box; }
 
   html {
-    background-color: #09090b;
-    color: #fafafa;
+    background-color: rgb(var(--background));
+    color: rgb(var(--text-main));
     -webkit-font-smoothing: antialiased;
     font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
   }
@@ -15,72 +33,85 @@
   ::selection { background: #0ea5e9; color: #fff; }
 
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: #09090b; }
-  ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 99px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgb(var(--border)); border-radius: 99px; }
 }
 
 @layer components {
 
   /* ── Cards ── */
   .card {
-    @apply bg-zinc-900 border border-zinc-800 rounded-2xl;
+    @apply bg-surface border border-border rounded-2xl shadow-sm;
   }
   .card-sm {
-    @apply bg-zinc-900 border border-zinc-800 rounded-xl;
+    @apply bg-surface border border-border rounded-xl shadow-sm transition-shadow hover:shadow-md;
   }
 
   /* ── Buttons ── */
   .btn-primary {
-    @apply bg-blue-500 hover:bg-blue-400 active:bg-blue-600
+    @apply bg-blue-600 hover:bg-blue-500 active:bg-blue-700
            text-white font-semibold text-sm
-           px-5 py-2.5 rounded-xl
-           transition-all duration-150
-           disabled:opacity-40 disabled:cursor-not-allowed
+           px-5 py-2.5 rounded-xl shadow-sm
+           transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed
            active:scale-[0.98] flex items-center justify-center gap-2;
   }
+  
+  .dark .btn-primary {
+    @apply bg-blue-500 hover:bg-blue-400 active:bg-blue-600;
+  }
+
   .btn-secondary {
-    @apply bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900
-           text-zinc-100 font-medium text-sm
-           px-5 py-2.5 rounded-xl
-           border border-zinc-700 hover:border-zinc-600
-           transition-all duration-150
-           disabled:opacity-40 disabled:cursor-not-allowed
+    @apply bg-surface hover:bg-surfaceHover active:bg-border
+           text-textMain font-medium text-sm
+           px-5 py-2.5 rounded-xl shadow-sm
+           border border-border hover:border-textMuted
+           transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed
            active:scale-[0.98] flex items-center justify-center gap-2;
   }
   .btn-ghost {
-    @apply text-zinc-400 hover:text-white text-sm font-medium
+    @apply text-textMuted hover:text-textMain text-sm font-medium
            px-4 py-2 rounded-xl
-           hover:bg-zinc-800
-           transition-all duration-150
+           hover:bg-surfaceHover
+           transition-all duration-200
            flex items-center justify-center gap-2;
   }
 
   /* ── Inputs ── */
   .input {
-    @apply w-full bg-zinc-800 border border-zinc-700
-           rounded-xl px-4 py-3 text-sm text-white
-           placeholder-zinc-500
-           focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30
-           transition-colors duration-150;
+    @apply w-full bg-background border border-border shadow-sm
+           rounded-xl px-4 py-3 text-sm text-textMain
+           placeholder:text-textMuted
+           focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
+           transition-all duration-200;
   }
 
   /* ── Badge ── */
   .badge {
-    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full;
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full;
   }
 
   /* ── Skeleton ── */
   .skeleton {
-    @apply rounded-lg bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800
+    @apply rounded-lg bg-gradient-to-r from-surfaceHover via-border to-surfaceHover
            bg-[length:200%_100%] animate-shimmer;
   }
 
+  @keyframes customFadeInUp {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── Stagger animation ── */
-  .stagger > * { opacity: 0; animation: fadeUp 0.4s ease forwards; }
-  .stagger > *:nth-child(1) { animation-delay: 0.04s; }
+  .stagger > * { 
+    opacity: 0; 
+    animation: customFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0.05s; }
   .stagger > *:nth-child(2) { animation-delay: 0.10s; }
-  .stagger > *:nth-child(3) { animation-delay: 0.16s; }
-  .stagger > *:nth-child(4) { animation-delay: 0.22s; }
-  .stagger > *:nth-child(5) { animation-delay: 0.28s; }
-  .stagger > *:nth-child(6) { animation-delay: 0.34s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.15s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.20s; }
+  .stagger > *:nth-child(5) { animation-delay: 0.25s; }
+  .stagger > *:nth-child(6) { animation-delay: 0.30s; }
 }
