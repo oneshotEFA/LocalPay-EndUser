@@ -4,12 +4,12 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export type PaymentMethod = "CBE" | "TELEBIRR" | "EBIRR" | "ABYSSINIA" | "NIB";
 export type VerificationMethod = "LINK" | "SCREENSHOT" | "SMS";
 
-
 export interface GatewaySession {
   checkoutId: string;
   invoiceId: string;
   amount: number;
   expiresAt?: number; // timestamp ms
+  clientId: string;
 }
 
 export interface DepositState {

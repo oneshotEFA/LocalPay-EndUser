@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { userId, email, checkoutId, invoiceId, amount } =
+    const { userId, email, checkoutId, invoiceId, amount, clientId } =
       await decodeCheckoutToken(token);
 
     const jwt = await createSessionJwt({ userId, email });
@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       checkoutId,
       invoiceId,
       amount,
+      clientId,
     });
     setSessionCookie(response, jwt);
 

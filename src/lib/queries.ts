@@ -20,10 +20,10 @@ export function useMe() {
 
 // ── fetchReceivingAccounts ────────────────────────────────────────────────────
 // Bank accounts never change mid-session → cache forever, fetch once.
-export function useReceivingAccounts() {
+export function useReceivingAccounts(clientId:string,checkoutId:string) {
   return useQuery({
     queryKey: QK.receivingAccounts,
-    queryFn: fetchReceivingAccounts,
+    queryFn:()=> fetchReceivingAccounts(clientId,checkoutId),
     staleTime: Infinity, // never re-fetch unless manually invalidated
     gcTime: 60 * 60 * 1000, // keep in memory for 1 h
     retry: 2,

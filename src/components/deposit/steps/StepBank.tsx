@@ -47,7 +47,11 @@ export default function StepBank() {
 
   const isGateway = !!gatewaySession;
 
-  const { data: accounts = [], isLoading, error } = useReceivingAccounts();
+  const {
+    data: accounts = [],
+    isLoading,
+    error,
+  } = useReceivingAccounts(gatewaySession?.clientId??"",gatewaySession?.checkoutId??"");
 
   // Selected matched account
   const activeAccount = accounts.find((a) => a.paymentMethod === paymentMethod);

@@ -1,5 +1,3 @@
-
-
 // ── Core fetch wrapper ────────────────────────────────────────────────────────
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -51,6 +49,7 @@ export async function submitSingleDeposit(payload: {
   rawProof?: string | null;
   accountNumber?: string;
   checkoutId: string | undefined;
+  clientId: string | undefined;
 }) {
   return apiFetch<any>("/api/deposit", {
     method: "POST",
@@ -61,11 +60,10 @@ export async function submitSingleDeposit(payload: {
       rawProof: payload.rawProof ?? null,
       accountNumber: payload.accountNumber,
       checkoutId: payload.checkoutId,
+      clientId: payload.clientId,
     }),
   });
 }
-
-
 
 // ── History ───────────────────────────────────────────────────────────────────
 
@@ -97,12 +95,17 @@ export async function fetchHistory(
   };
 }
 
-export async function fetchReceivingAccounts(): Promise<
+export async function fetchReceivingAccounts(
+  clientId: string,
+  checkoutId: string,
+): Promise<
   Array<{
     paymentMethod: string;
     accountNumber: string;
     accountName: string;
   }>
 > {
-  return apiFetch("/api/deposit/receiving-account");
+  return apiFetch(
+    `/api/deposit/receiving-account?clId=${clientId}&chId=${checkoutId}`,
+  );
 }

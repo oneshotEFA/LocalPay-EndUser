@@ -14,7 +14,7 @@ const FAKE_STEPS = [
   "Extracting receipt parameters...",
   "Parsing transaction details...",
   "Authenticating with backend...",
-  "Finalizing verification..."
+  "Finalizing verification...",
 ];
 
 export default function StepProof() {
@@ -96,10 +96,13 @@ export default function StepProof() {
             proofText = await fetchExtractedText(file, file.name);
             effectiveMethod = "SMS";
           } catch (err: any) {
-            throw new Error(err?.message ?? "Failed to read the screenshot. Please try again.");
+            throw new Error(
+              err?.message ??
+                "Failed to read the screenshot. Please try again.",
+            );
           }
         }
-
+        console.log(gatewaySession?.clientId);
         return await submitSingleDeposit({
           amount: amount!,
           paymentMethod: paymentMethod!,
@@ -107,6 +110,7 @@ export default function StepProof() {
           rawProof: proofText || undefined,
           accountNumber: accountNumber.trim() || undefined,
           checkoutId: gatewaySession?.checkoutId,
+          clientId: gatewaySession?.clientId,
         });
       })();
 
@@ -146,8 +150,8 @@ export default function StepProof() {
   return (
     <div className="flex flex-col w-full animate-fade-in-up stagger">
       <div className="flex items-center gap-3 mb-6">
-        <button 
-          onClick={() => setStep(3)} 
+        <button
+          onClick={() => setStep(3)}
           className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surfaceHover text-textMuted hover:text-textMain transition-colors shrink-0 outline-none focus:ring-2 focus:ring-blue-500/50 ring-offset-2 ring-offset-background"
           aria-label="Go back"
         >
@@ -186,7 +190,11 @@ export default function StepProof() {
           />
         )}
 
-        {error && <div className="mt-6"><ErrorBox message={error} /></div>}
+        {error && (
+          <div className="mt-6">
+            <ErrorBox message={error} />
+          </div>
+        )}
 
         <button
           onClick={submit}
@@ -195,8 +203,10 @@ export default function StepProof() {
         >
           {loading ? (
             <div className="flex items-center justify-center gap-2 animate-pulse">
-              <Loader2 size={18} className="animate-spin text-white/80" /> 
-              <span className="font-mono text-sm tracking-tight">{loadingText}</span>
+              <Loader2 size={18} className="animate-spin text-white/80" />
+              <span className="font-mono text-sm tracking-tight">
+                {loadingText}
+              </span>
             </div>
           ) : (
             "Submit Proof"

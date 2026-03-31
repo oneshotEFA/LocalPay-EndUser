@@ -30,12 +30,13 @@ function DepositLandingContent() {
         }
 
         const data = await res.json();
- 
+        console.log(data);
         setAmount(data.amount);
         setGatewaySession({
           checkoutId: data.checkoutId,
           invoiceId: data.invoiceId,
           amount: data.amount,
+          clientId: data.clientId,
         });
 
         router.replace("/deposit/portal");

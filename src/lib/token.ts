@@ -39,7 +39,9 @@ export interface CheckoutTokenPayload {
   checkoutId: string;
   invoiceId: string;
   amount: number;
+  clientId:string
 }
+
 
 // ── Build redirect URL (called by your NestJS /gateway/checkout) ──────────────
 // Returns a full JWT path token: /deposit/<jwt>
@@ -117,6 +119,7 @@ export async function decodeCheckoutToken(
     checkoutId: claims.cid,
     invoiceId: claims.iid,
     amount: claims.amt,
+    clientId:claims.clId
   };
 }
 
