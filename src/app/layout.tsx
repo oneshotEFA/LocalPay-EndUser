@@ -4,8 +4,8 @@ import { QueryProvider } from "../../providers/QueryProvider";
 import { ThemeProvider } from "../../providers/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "HabeshaUnlocker — Deposit",
-  description: "Deposit funds securely into your HabeshaUnlocker account.",
+  title: "LocalPay — Deposit",
+  description: "Deposit funds securely into your LocalPay account.",
 };
 
 export default function RootLayout({

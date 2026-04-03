@@ -19,20 +19,25 @@ export default function DepositPage() {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
         <div className="card max-w-sm w-full p-8 text-center space-y-5">
+          <img
+            src="/logo.jpg"
+            alt="LocalPay logo"
+            className="w-16 h-16 rounded-2xl object-cover mx-auto shadow-sm"
+          />
           <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto">
             <AlertTriangle size={22} className="text-red-400" />
           </div>
           <div>
             <h1 className="text-lg font-semibold text-white">Access Denied</h1>
             <p className="text-sm text-zinc-400 mt-2 leading-relaxed">
-              Please return to HabeshaUnlocker and use the link provided.
+              Please return to LocalPay and use the link provided.
             </p>
           </div>
           <a
             href={process.env.NEXT_PUBLIC_PARENT_APP_URL ?? '#'}
             className="btn-secondary w-full block text-center"
           >
-            ← Back to HabeshaUnlocker
+            ← Back to LocalPay
           </a>
         </div>
       </div>

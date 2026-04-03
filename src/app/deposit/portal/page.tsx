@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Wallet, ClipboardList, LogOut, Loader2, Moon, Sun } from "lucide-react";
+import {
+  Wallet,
+  ClipboardList,
+  LogOut,
+  Loader2,
+  Moon,
+  Sun,
+} from "lucide-react";
 import DepositFlow from "@/components/deposit/DepositFlow";
 import HistoryPanel from "@/components/history/HistoryPanel";
 import { useTheme } from "../../../../providers/ThemeProvider";
@@ -53,10 +60,17 @@ export default function PortalPage() {
     <div className="flex min-h-screen bg-background text-textMain">
       {/* ── Sidebar (Desktop: Icon-only collapsed) ── */}
       <aside className="hidden md:flex flex-col w-16 border-r border-border bg-surface shrink-0 items-center py-5 z-50">
-        <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm mb-8 shadow-sm">
-          H
+        <div className="mb-8 flex flex-col items-center gap-2">
+          <img
+            src="/logo.jpg"
+            alt="LocalPay logo"
+            className="w-10 h-10 rounded-xl object-cover shadow-sm"
+          />
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-textMuted">
+            LPay
+          </p>
         </div>
-        
+
         <div className="flex flex-col gap-4 flex-1 w-full items-center">
           <button
             onClick={() => setTab("deposit")}
@@ -78,7 +92,10 @@ export default function PortalPage() {
             }`}
             title="History"
           >
-            <ClipboardList size={20} strokeWidth={tab === "history" ? 2.5 : 2} />
+            <ClipboardList
+              size={20}
+              strokeWidth={tab === "history" ? 2.5 : 2}
+            />
           </button>
         </div>
 

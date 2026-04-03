@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useDepositStore } from "@/store/deposit.store";
 import { ArrowLeft, ShieldCheck, Clock } from "lucide-react";
 import ProgressBar from "./ProgressBar";
@@ -34,10 +33,20 @@ export default function DepositFlow({ user }: { user?: User | null }) {
           >
             <ArrowLeft size={16} className="mr-1" /> Cancel
           </button>
-          <div className="text-right">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo.jpg"
+              alt="LocalPay logo"
+              className="w-9 h-9 rounded-xl object-cover shadow-sm"
+            />
+            <div className="text-right">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-textMuted">
+                LocalPay
+              </p>
             <p className="font-black text-textMain tracking-tight">
               ETB {formattedAmount}
             </p>
+            </div>
           </div>
         </div>
 
@@ -56,6 +65,21 @@ export default function DepositFlow({ user }: { user?: User | null }) {
           </button>
 
           <div className="mb-2">
+            <div className="flex items-center gap-3 mb-5">
+              <img
+                src="/logo.jpg"
+                alt="LocalPay logo"
+                className="w-12 h-12 rounded-2xl object-cover shadow-sm"
+              />
+              <div>
+                <p className="text-[10px] font-black text-textMuted uppercase tracking-[0.25em]">
+                  LocalPay
+                </p>
+                <p className="text-xs font-medium text-textMuted">
+                  Deposit checkout
+                </p>
+              </div>
+            </div>
             <p className="text-xs font-bold text-textMuted uppercase tracking-widest truncate mb-2">
               funding to email:{" "}
               {user?.email || "unknown back to the first page critical!!"}

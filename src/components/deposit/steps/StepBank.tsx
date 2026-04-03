@@ -2,16 +2,16 @@
 
 import { useDepositStore, PaymentMethod } from "@/store/deposit.store";
 import { useReceivingAccounts } from "@/lib/queries";
-import { Loader2, Copy, Check, ArrowLeft, ArrowRight } from "lucide-react";
+import { Loader2, Copy, Check, ArrowRight } from "lucide-react";
 import { useState, Fragment } from "react";
 import clsx from "clsx";
 
 const BANK_META: Record<string, { logo: string; label: string }> = {
-  CBE: { logo: "https://ui-avatars.com/api/?name=CBE&background=f0f9ff&color=0284c7&size=128&bold=true", label: "CBE Birr" },
-  TELEBIRR: { logo: "https://ui-avatars.com/api/?name=TB&background=fdf4ff&color=c026d3&size=128&bold=true", label: "Telebirr" },
-  EBIRR: { logo: "https://ui-avatars.com/api/?name=EB&background=fffbeb&color=d97706&size=128&bold=true", label: "E-Birr" },
-  ABYSSINIA: { logo: "https://ui-avatars.com/api/?name=BOA&background=fef2f2&color=dc2626&size=128&bold=true", label: "Bank of Abyssinia" },
-  NIB: { logo: "https://ui-avatars.com/api/?name=NIB&background=f0fdf4&color=16a34a&size=128&bold=true", label: "NIB International" },
+  CBE: { logo: "/cbe.png", label: "CBE Bank" },
+  TELEBIRR: { logo: "/telebirr.png", label: "Telebirr" },
+  EBIRR: { logo: "/ebirr.png", label: "E-Birr" },
+  ABYSSINIA: { logo: "/boa.png", label: "Bank of Abyssinia" },
+  NIB: { logo: "/nib.png", label: "NIB International" },
 };
 
 function CopyButton({ text }: { text: string }) {
@@ -42,16 +42,17 @@ function CopyButton({ text }: { text: string }) {
 }
 
 export default function StepBank() {
-  const { paymentMethod, setPaymentMethod, amount, setStep, gatewaySession } =
+  const { paymentMethod, setPaymentMethod, setStep, gatewaySession } =
     useDepositStore();
-
-  const isGateway = !!gatewaySession;
 
   const {
     data: accounts = [],
     isLoading,
     error,
-  } = useReceivingAccounts(gatewaySession?.clientId??"",gatewaySession?.checkoutId??"");
+  } = useReceivingAccounts(
+    gatewaySession?.clientId ?? "",
+    gatewaySession?.checkoutId ?? "",
+  );
 
   // Selected matched account
   const activeAccount = accounts.find((a) => a.paymentMethod === paymentMethod);
@@ -89,7 +90,12 @@ export default function StepBank() {
           disabled={!paymentMethod || isLoading}
           className="btn-primary w-full h-14 text-base font-bold flex items-center justify-center gap-2 group shadow-md"
         >
-          Confirm & Proceed <ArrowRight size={18} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform" />
+          Confirm & Proceed{" "}
+          <ArrowRight
+            size={18}
+            strokeWidth={2.5}
+            className="group-hover:translate-x-1 transition-transform"
+          />
         </button>
       </div>
     </>
@@ -103,7 +109,7 @@ export default function StepBank() {
             Select Payment Method
           </h2>
           <p className="text-sm font-medium text-textMuted mt-1">
-            Choose your preferred platform to deposit from.
+            Choose how you want to pay with LocalPay.
           </p>
         </div>
       </div>
@@ -127,9 +133,12 @@ export default function StepBank() {
             {/* Grid responds: Stack vertically on mobile, square grid on desktop */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {accounts.map(({ paymentMethod: key }, index) => {
-                const meta = BANK_META[key] ?? { logo: `https://ui-avatars.com/api/?name=${key}&background=random`, label: key };
+                const meta = BANK_META[key] ?? {
+                  logo: "/logo.jpg",
+                  label: key,
+                };
                 const isSelected = paymentMethod === key;
-                const isRecommended = index === 0;
+                const isRecommended = index === 1;
 
                 return (
                   <Fragment key={key}>
@@ -138,7 +147,7 @@ export default function StepBank() {
                       className={clsx(
                         "relative group flex items-center md:flex-col md:justify-center p-4 rounded-xl transition-all duration-200 outline-none w-full",
                         "border shadow-sm hover:shadow-md",
-                        "md:aspect-[4/3]", 
+                        "md:aspect-[4/3]",
                         isSelected
                           ? "border-blue-500 bg-blue-600/5 ring-1 ring-blue-500"
                           : "border-border bg-background hover:border-textMuted",
@@ -151,10 +160,14 @@ export default function StepBank() {
                       )}
                       {isSelected && (
                         <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-                          <Check size={10} strokeWidth={4} className="text-white" />
+                          <Check
+                            size={10}
+                            strokeWidth={4}
+                            className="text-white"
+                          />
                         </div>
                       )}
-                      
+
                       <div
                         className={clsx(
                           "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-transform duration-300 md:mb-4 outline outline-1 outline-border",
@@ -163,16 +176,18 @@ export default function StepBank() {
                             : "group-hover:scale-105",
                         )}
                       >
-                        <img 
-                          src={meta.logo} 
-                          alt={`${meta.label} logo`} 
-                          className="w-full h-full object-cover rounded-2xl" 
+                        <img
+                          src={meta.logo}
+                          alt={`${meta.label} logo`}
+                          className="w-full h-full object-cover rounded-2xl"
                         />
                       </div>
-                      <span 
+                      <span
                         className={clsx(
-                          "text-sm md:text-xs font-bold md:text-center w-full truncate px-4 md:px-1 flex-1 text-left",
-                          isSelected ? "text-textMain" : "text-textMuted group-hover:text-textMain"
+                          "text-sm md:text-xs -mt-1 font-bold md:text-center w-full truncate px-4 md:px-1 flex-1 text-left",
+                          isSelected
+                            ? "text-textMain"
+                            : "text-textMuted group-hover:text-textMain",
                         )}
                       >
                         {meta.label}
