@@ -18,6 +18,7 @@ function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
   function copy() {
+    if (!text) return;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -45,16 +46,15 @@ export default function StepBank() {
   const { paymentMethod, setPaymentMethod, setStep, gatewaySession } =
     useDepositStore();
 
-  const {
-    data: accounts = [],
-    isLoading,
-    error,
-  } = useReceivingAccounts(
+  const { data, isLoading, error } = useReceivingAccounts(
     gatewaySession?.clientId ?? "",
     gatewaySession?.checkoutId ?? "",
   );
 
-  // Selected matched account
+  // ✅ FIX 1: normalize safely (THIS was your crash root cause)
+  const accounts = Array.isArray(data) ? data : [];
+
+  // Selected matched account (safe now)
   const activeAccount = accounts.find((a) => a.paymentMethod === paymentMethod);
 
   const renderDetailsPanel = () => (
@@ -62,23 +62,27 @@ export default function StepBank() {
       <p className="text-[10px] font-black text-textMuted tracking-widest uppercase mb-3 px-1">
         Receiving Account Details
       </p>
+
       <div className="card p-4 md:p-5 bg-background shadow-inner border border-border">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
           <div className="space-y-1 md:space-y-0">
             <p className="text-[10px] font-bold text-textMuted uppercase tracking-wider md:mb-1">
               Account Name
             </p>
+
             <p className="text-sm md:text-base font-bold text-textMain px-3 py-2.5 md:py-1.5 bg-surfaceHover rounded-lg border border-border/50 truncate">
-              {activeAccount?.accountName}
+              {activeAccount?.accountName || "-"}
             </p>
           </div>
+
           <div className="space-y-1 md:space-y-0">
             <p className="text-[10px] font-bold text-textMuted uppercase tracking-wider md:mb-1">
               Account Number
             </p>
+
             <div className="flex items-center justify-between px-3 py-2 bg-surfaceHover rounded-lg border border-border/50">
               <p className="text-base md:text-lg font-mono font-black text-textMain tracking-tight">
-                {activeAccount?.accountNumber}
+                {activeAccount?.accountNumber || "-"}
               </p>
               <CopyButton text={activeAccount?.accountNumber || ""} />
             </div>
@@ -87,10 +91,10 @@ export default function StepBank() {
 
         <button
           onClick={() => setStep(3)}
-          disabled={!paymentMethod || isLoading}
-          className="btn-primary w-full h-14 text-base font-bold flex items-center justify-center gap-2 group shadow-md"
+          disabled={!paymentMethod || isLoading || !activeAccount}
+          className="btn-primary w-full h-14 text-base font-bold flex items-center justify-center gap-2 group shadow-md disabled:opacity-50"
         >
-          Confirm & Proceed{" "}
+          Confirm & Proceed
           <ArrowRight
             size={18}
             strokeWidth={2.5}
@@ -114,6 +118,7 @@ export default function StepBank() {
         </div>
       </div>
 
+      {/* LOADING */}
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-20 gap-3 text-textMuted text-sm">
           <Loader2 size={24} className="animate-spin text-blue-500" />
@@ -121,22 +126,31 @@ export default function StepBank() {
         </div>
       )}
 
+      {/* ERROR */}
       {error && (
         <div className="rounded-xl p-4 text-sm font-medium text-red-500 bg-red-500/10 border border-red-500/20 mb-6">
           {(error as Error).message}
         </div>
       )}
 
+      {/* EMPTY STATE FIX (only safe check) */}
+      {!isLoading && !error && accounts.length === 0 && (
+        <div className="rounded-xl p-4 text-sm font-medium text-red-500 bg-red-500/10 border border-red-500/20 mb-6">
+          No available banks found. Please contact support or try again later.
+        </div>
+      )}
+
+      {/* MAIN UI (UNCHANGED STRUCTURE) */}
       {!isLoading && !error && accounts.length > 0 && (
         <>
           <div className="card border-border shadow-sm p-3 md:p-6 mb-8 relative z-0">
-            {/* Grid responds: Stack vertically on mobile, square grid on desktop */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {accounts.map(({ paymentMethod: key }, index) => {
                 const meta = BANK_META[key] ?? {
                   logo: "/logo.jpg",
                   label: key,
                 };
+
                 const isSelected = paymentMethod === key;
                 const isRecommended = index === 1;
 
@@ -158,6 +172,7 @@ export default function StepBank() {
                           Top Choice
                         </span>
                       )}
+
                       {isSelected && (
                         <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
                           <Check
@@ -182,17 +197,17 @@ export default function StepBank() {
                           className="w-full h-full object-cover rounded-2xl"
                         />
                       </div>
+
                       <span
                         className={clsx(
                           "text-sm md:text-xs -mt-1 font-bold md:text-center w-full truncate px-4 md:px-1 flex-1 text-left",
-                          isSelected
-                            ? "text-textMain"
-                            : "text-textMuted group-hover:text-textMain",
+                          isSelected ? "text-textMain" : "text-textMuted",
                         )}
                       >
                         {meta.label}
                       </span>
                     </button>
+
                     {isSelected && activeAccount && (
                       <div className="md:hidden animate-fade-in-up mb-2">
                         {renderDetailsPanel()}
