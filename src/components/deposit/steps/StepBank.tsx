@@ -137,15 +137,15 @@ export default function StepBank() {
         <>
           <div className="card border-border shadow-sm p-3 md:p-6 mb-8 relative z-0">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {accounts.map((paymentMethod, index) => {
-                const isSelected = paymentMethod === paymentMethod;
+              {accounts.map((account, index) => {
+                const isSelected = account.paymentMethod === paymentMethod;
                 const isRecommended = index === 1;
 
                 return (
-                  <Fragment key={paymentMethod.paymentMethod}>
+                  <Fragment key={account.paymentMethod}>
                     <button
                       onClick={() =>
-                        setPaymentMethod(paymentMethod.paymentMethod as string)
+                        setPaymentMethod(account.paymentMethod as string)
                       }
                       className={clsx(
                         "relative group flex items-center md:flex-col md:justify-center p-4 rounded-xl transition-all duration-200 outline-none w-full",
@@ -182,11 +182,11 @@ export default function StepBank() {
                       >
                         <img
                           src={
-                            paymentMethod.bankLogoUrl.length > 0
-                              ? paymentMethod.bankLogoUrl
+                            account.bankLogoUrl.length > 0
+                              ? account.bankLogoUrl
                               : "/placeholder-bank.png"
                           }
-                          alt={`${paymentMethod.paymentMethod} logo`}
+                          alt={`${account.paymentMethod} logo`}
                           className="w-full h-full object-cover rounded-2xl"
                         />
                       </div>
@@ -197,7 +197,7 @@ export default function StepBank() {
                           isSelected ? "text-textMain" : "text-textMuted",
                         )}
                       >
-                        {paymentMethod.paymentMethod}
+                        {account.paymentMethod}
                       </span>
                     </button>
 
