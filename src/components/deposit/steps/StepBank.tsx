@@ -1,18 +1,10 @@
 "use client";
 
-import { useDepositStore, PaymentMethod } from "@/store/deposit.store";
+import { useDepositStore } from "@/store/deposit.store";
 import { useReceivingAccounts } from "@/lib/queries";
 import { Loader2, Copy, Check, ArrowRight } from "lucide-react";
 import { useState, Fragment } from "react";
 import clsx from "clsx";
-
-const BANK_META: Record<string, { logo: string; label: string }> = {
-  CBE: { logo: "/cbe.png", label: "CBE Bank" },
-  TELEBIRR: { logo: "/telebirr.png", label: "Telebirr" },
-  EBIRR: { logo: "/ebirr.png", label: "E-Birr" },
-  ABYSSINIA: { logo: "/boa.png", label: "Bank of Abyssinia" },
-  NIB: { logo: "/nib.png", label: "NIB International" },
-};
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -145,19 +137,16 @@ export default function StepBank() {
         <>
           <div className="card border-border shadow-sm p-3 md:p-6 mb-8 relative z-0">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {accounts.map(({ paymentMethod: key }, index) => {
-                const meta = BANK_META[key] ?? {
-                  logo: "/logo.jpg",
-                  label: key,
-                };
-
-                const isSelected = paymentMethod === key;
+              {accounts.map((paymentMethod, index) => {
+                const isSelected = paymentMethod === paymentMethod;
                 const isRecommended = index === 1;
 
                 return (
-                  <Fragment key={key}>
+                  <Fragment key={paymentMethod.paymentMethod}>
                     <button
-                      onClick={() => setPaymentMethod(key as PaymentMethod)}
+                      onClick={() =>
+                        setPaymentMethod(paymentMethod.paymentMethod as string)
+                      }
                       className={clsx(
                         "relative group flex items-center md:flex-col md:justify-center p-4 rounded-xl transition-all duration-200 outline-none w-full",
                         "border shadow-sm hover:shadow-md",
@@ -192,8 +181,12 @@ export default function StepBank() {
                         )}
                       >
                         <img
-                          src={meta.logo}
-                          alt={`${meta.label} logo`}
+                          src={
+                            paymentMethod.bankLogoUrl.length > 0
+                              ? paymentMethod.bankLogoUrl
+                              : "/placeholder-bank.png"
+                          }
+                          alt={`${paymentMethod.paymentMethod} logo`}
                           className="w-full h-full object-cover rounded-2xl"
                         />
                       </div>
@@ -204,7 +197,7 @@ export default function StepBank() {
                           isSelected ? "text-textMain" : "text-textMuted",
                         )}
                       >
-                        {meta.label}
+                        {paymentMethod.paymentMethod}
                       </span>
                     </button>
 

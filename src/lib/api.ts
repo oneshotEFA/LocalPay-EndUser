@@ -103,6 +103,7 @@ export async function fetchReceivingAccounts(
     paymentMethod: string;
     accountNumber: string;
     accountName: string;
+    bankLogoUrl: string;
   }>
 > {
   return apiFetch(

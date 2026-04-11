@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type PaymentMethod = "CBE" | "TELEBIRR" | "EBIRR" | "ABYSSINIA" | "NIB";
 export type VerificationMethod = "LINK" | "SCREENSHOT" | "SMS";
 
 export interface GatewaySession {
@@ -15,7 +14,7 @@ export interface GatewaySession {
 export interface DepositState {
   step: number;
   amount: number | null;
-  paymentMethod: PaymentMethod | null;
+  paymentMethod: string | null;
   verificationMethod: VerificationMethod | null;
   rawProof: string | null;
   screenshotFile: File | null;
@@ -25,7 +24,7 @@ export interface DepositState {
   gatewaySession: GatewaySession | null;
   setStep: (s: number) => void;
   setAmount: (a: number) => void;
-  setPaymentMethod: (p: PaymentMethod) => void;
+  setPaymentMethod: (p: string) => void;
   setVerificationMethod: (v: VerificationMethod) => void;
   setRawProof: (r: string) => void;
   setScreenshotFile: (f: File) => void;
